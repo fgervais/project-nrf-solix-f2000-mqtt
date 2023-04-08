@@ -5,7 +5,8 @@
 ```bash
 mkdir <PROJECT NAME>
 cd <PROJECT NAME>
-docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/workdir/project nordicplayground/nrfconnect-sdk:v2.1-branch bash
+docker run --rm -u $(id -u):$(id -g) -v $(pwd):/new -w /new -e ZEPHYR_BASE="" nordicplayground/nrfconnect-sdk:v2.1-branch \
+        bash -c "west init -m https://github.com/fgervais/<PROJECT NAME>.git . && west update"
 west init -m https://github.com/fgervais/<PROJECT NAME>.git .
 west update
 ```

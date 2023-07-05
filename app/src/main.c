@@ -5,6 +5,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
+#include <app_version.h>
+
 
 #define SLEEP_TIME_MS   10
 #define LED0_NODE DT_ALIAS(myled0alias)
@@ -25,6 +27,8 @@ void main(void)
 	if (ret < 0) {
 		return;
 	}
+
+	LOG_INF("Version: %s", APP_VERSION_FULL);
 
 	LOG_INF("****************************************");
 	LOG_INF("MAIN DONE");

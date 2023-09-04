@@ -13,14 +13,14 @@ docker run --rm -u $(id -u):$(id -g) -v $(pwd):/new -w /new -e ZEPHYR_BASE="" no
 
 ```bash
 cd application
-docker compose run --rm nrf west build -b my_board -s app
+docker compose run --rm nrf west build -b pink_panda -s app
 ```
 
 ## menuconfig
 
 ```bash
 cd application
-docker compose run --rm nrf west build -b my_board -s app -t menuconfig
+docker compose run --rm nrf west build -b pink_panda -s app -t menuconfig
 ```
 
 ## Clean

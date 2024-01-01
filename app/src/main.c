@@ -8,7 +8,7 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 #include <app_version.h>
 
 
-void main(void)
+int main(void)
 {
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
@@ -22,4 +22,6 @@ void main(void)
 	// pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
 
 	LOG_INF("PM_DEVICE_ACTION_SUSPEND");
+
+	return 0;
 }

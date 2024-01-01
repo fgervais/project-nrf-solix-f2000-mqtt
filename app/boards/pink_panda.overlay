@@ -129,3 +129,6 @@
 &gpio1 {
 	status = "disabled";
 };
+&ieee802154 {
+	status = "disabled";
+};

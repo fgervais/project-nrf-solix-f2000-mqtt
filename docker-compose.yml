@@ -1,7 +1,7 @@
 version: '3'
 services:
   nrf:
-    image: nordicplayground/nrfconnect-sdk:v2.5-branch
+    image: zephyrprojectrtos/ci:v0.26.6
     user: ${UID:-1000}:${GID:-1000}
     volumes:
       - ..:/workdir/project

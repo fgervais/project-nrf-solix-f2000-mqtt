@@ -14,11 +14,9 @@ int main(void)
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 #endif
 
-	LOG_INF("Version: %s", APP_VERSION_FULL);
+	LOG_INF("\n\n🚀 MAIN START (%s) 🚀\n", APP_VERSION_FULL);
 
-	LOG_INF("****************************************");
-	LOG_INF("MAIN DONE");
-	LOG_INF("****************************************");
+	LOG_INF("🎉 init done 🎉");
 
 #if defined(CONFIG_APP_SUSPEND_CONSOLE)
 	pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);

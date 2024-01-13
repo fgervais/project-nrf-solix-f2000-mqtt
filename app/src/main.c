@@ -10,7 +10,9 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 int main(void)
 {
+#if defined(CONFIG_APP_SUSPEND_CONSOLE)
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+#endif
 
 	LOG_INF("Version: %s", APP_VERSION_FULL);
 
@@ -18,10 +20,9 @@ int main(void)
 	LOG_INF("MAIN DONE");
 	LOG_INF("****************************************");
 
-	k_sleep(K_SECONDS(3));
-	// pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
-
-	LOG_INF("PM_DEVICE_ACTION_SUSPEND");
+#if defined(CONFIG_APP_SUSPEND_CONSOLE)
+	pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+#endif
 
 	return 0;
 }

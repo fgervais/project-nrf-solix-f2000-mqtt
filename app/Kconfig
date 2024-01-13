@@ -1,0 +1,8 @@
+mainmenu "Main Application"
+
+config APP_SUSPEND_CONSOLE
+	bool "Suspend console"
+	help
+	  Suspend console.
+
+source "Kconfig.zephyr"

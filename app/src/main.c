@@ -8,14 +8,21 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #include <app_version.h>
 
+#include "reset.h"
+
 
 int main(void)
 {
 #if defined(CONFIG_APP_SUSPEND_CONSOLE)
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 #endif
+	uint32_t reset_cause;
+
 
 	LOG_INF("\n\n🚀 MAIN START (%s) 🚀\n", APP_VERSION_FULL);
+
+	reset_cause = show_reset_cause();
+	clear_reset_cause();
 
 	LOG_INF("🎉 init done 🎉");
 

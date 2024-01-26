@@ -26,4 +26,5 @@ target_include_directories(app PRIVATE ${CMAKE_BINARY_DIR}/app/include src)
 
 target_sources(app PRIVATE
         src/reset.c
+        src/watchdog.c
         src/main.c)

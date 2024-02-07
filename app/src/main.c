@@ -19,6 +19,7 @@ int main(void)
 #if defined(CONFIG_APP_SUSPEND_CONSOLE)
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 #endif
+	int ret;
 	uint32_t reset_cause;
 	int main_wdt_chan_id = -1;
 
@@ -33,7 +34,11 @@ int main(void)
 	LOG_INF("🎉 init done 🎉");
 
 #if defined(CONFIG_APP_SUSPEND_CONSOLE)
-	pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+	ret = pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+	if (ret < 0) {
+		LOG_ERR("Could not suspend the console");
+		return ret;
+	}
 #endif
 
 	thread_analyzer_print();

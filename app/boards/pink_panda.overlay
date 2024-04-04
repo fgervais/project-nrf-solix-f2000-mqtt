@@ -129,6 +129,9 @@
 &gpio1 {
 	status = "disabled";
 };
+&gpiote {
+    status = "okay";
+};
 &ieee802154 {
 	status = "disabled";
 };

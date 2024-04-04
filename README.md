@@ -5,7 +5,7 @@
 ```bash
 mkdir <PROJECT NAME>
 cd <PROJECT NAME>
-docker run --rm -u $(id -u):$(id -g) -v $(pwd):/new -w /new zephyrprojectrtos/ci:v0.26.6 \
+docker run --rm -u $(id -u):$(id -g) -v $(pwd):/new -w /new zephyrprojectrtos/ci \
         bash -c "west init -m https://github.com/fgervais/<PROJECT NAME>.git . && west update"
 ```
 

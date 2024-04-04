@@ -6,7 +6,7 @@ manifest:
     - name: nrf
       repo-path: sdk-nrf
       remote: ncs
-      revision: v2.5.1
+      revision: v2.6.0
       import: true
     - name: zephyr-my-boards
       url: https://github.com/fgervais/zephyr-my-boards

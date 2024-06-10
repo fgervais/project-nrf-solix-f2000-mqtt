@@ -13,9 +13,8 @@
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #include <app_version.h>
-
-#include "reset.h"
-#include "watchdog.h"
+#include <reset.h>
+#include <watchdog.h>
 
 
 #define BUTTON_PRESS_EVENT		BIT(0)
@@ -35,7 +34,17 @@ int main(void)
 	int main_wdt_chan_id = -1;
 	uint32_t events;
 
-	watchdog_init(wdt, &main_wdt_chan_id);
+	ret = watchdog_new_channel(wdt, &main_wdt_chan_id);
+	if (ret < 0) {
+		LOG_ERR("Could allocate main watchdog channel");
+		return ret;
+	}
+
+	ret = watchdog_start(wdt);
+	if (ret < 0) {
+		LOG_ERR("Could allocate start watchdog");
+		return ret;
+	}
 
 	LOG_INF("\n\n🚀 MAIN START (%s) 🚀\n", APP_VERSION_FULL);
 

@@ -43,7 +43,7 @@ docker compose run --rm nrf west update
 ```bash
 cd application
 docker compose -f docker-compose.yml -f docker-compose.device.yml \
-        run nrf west flash
+        run --rm nrf west flash
 ```
 
 ### pyocd

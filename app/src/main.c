@@ -13,8 +13,8 @@
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #include <app_version.h>
-#include <reset.h>
-#include <watchdog.h>
+#include <mymodule/base/reset.h>
+#include <mymodule/base/watchdog.h>
 
 
 #define BUTTON_PRESS_EVENT		BIT(0)

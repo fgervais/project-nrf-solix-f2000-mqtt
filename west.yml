@@ -10,7 +10,7 @@ manifest:
       import: true
     - name: zephyr-my-boards
       url: https://github.com/fgervais/zephyr-my-boards
-      revision: 69dcc1c0462d6e7a81c4a9efac0528855d4a1438
+      revision: 4ff1fdd14a2d755301cb1a6e71b9fa55788ec856
       path: myboards
     - name: zephyr-mymodule-base
       url: https://github.com/fgervais/zephyr-mymodule-base.git

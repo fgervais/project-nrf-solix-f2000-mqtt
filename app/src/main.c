@@ -66,7 +66,7 @@ int main(void)
 	}
 #endif
 
-	thread_analyzer_print();
+	thread_analyzer_print(0);
 
 	LOG_INF("┌──────────────────────────────────────────────────────────┐");
 	LOG_INF("│ Entering main loop                                       │");

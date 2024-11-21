@@ -1,3 +1,4 @@
+list(APPEND OVERLAY_CONFIG "ble.conf")
 # set(OVERLAY_CONFIG "secret.conf")
 
 cmake_minimum_required(VERSION 3.20.0)

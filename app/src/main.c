@@ -5,6 +5,14 @@
 #include <zephyr/pm/device.h>
 #include <zephyr/debug/thread_analyzer.h>
 
+#include <zephyr/bluetooth/bluetooth.h>
+// #include <zephyr/bluetooth/hci.h>
+// #include <zephyr/bluetooth/conn.h>
+// #include <zephyr/bluetooth/uuid.h>
+// #include <zephyr/bluetooth/gatt.h>
+// #include <bluetooth/gatt_dm.h>
+#include <bluetooth/scan.h>
+
 #define MODULE main
 #include <caf/events/module_state_event.h>
 #include <caf/events/button_event.h>
@@ -19,9 +27,118 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #define BUTTON_PRESS_EVENT		BIT(0)
 
+// #define ADV_NAME_STR_MAX_LEN (sizeof(CONFIG_BT_DEVICE_NAME))
+#define ADV_NAME_STR_MAX_LEN 64
+
 
 static K_EVENT_DEFINE(button_events);
 
+
+static struct bt_conn *default_conn;
+
+
+static bool adv_data_parse_cb(struct bt_data *data, void *user_data)
+{
+        char *name = user_data;
+        uint8_t len;
+
+        switch (data->type) {
+        case BT_DATA_NAME_SHORTENED:
+        case BT_DATA_NAME_COMPLETE:
+                len = MIN(data->data_len, ADV_NAME_STR_MAX_LEN - 1);
+                memcpy(name, data->data, len);
+                name[len] = '\0';
+                return false;
+        default:
+                return true;
+        }
+}
+
+static void scan_filter_match(struct bt_scan_device_info *device_info,
+			      struct bt_scan_filter_match *filter_match,
+			      bool connectable)
+{
+	char addr[BT_ADDR_LE_STR_LEN];
+
+	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
+
+	printk("Filters matched. Address: %s connectable: %s\n",
+		addr, connectable ? "yes" : "no");
+}
+
+static void scan_connecting_error(struct bt_scan_device_info *device_info)
+{
+	printk("Connecting failed\n");
+}
+
+static void scan_connecting(struct bt_scan_device_info *device_info,
+			    struct bt_conn *conn)
+{
+	default_conn = bt_conn_ref(conn);
+}
+
+static void scan_filter_no_match(struct bt_scan_device_info *device_info,
+				 bool connectable)
+{
+	// int err;
+	// struct bt_conn *conn = NULL;
+	char addr[BT_ADDR_LE_STR_LEN];
+	char name_str[ADV_NAME_STR_MAX_LEN] = {0};
+
+	// if (device_info->recv_info->adv_type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
+	// 	bt_addr_le_to_str(device_info->recv_info->addr, addr,
+	// 			  sizeof(addr));
+	// 	printk("Direct advertising received from %s\n", addr);
+	// 	bt_scan_stop();
+
+	// 	err = bt_conn_le_create(device_info->recv_info->addr,
+	// 				BT_CONN_LE_CREATE_CONN,
+	// 				device_info->conn_param, &conn);
+
+	// 	if (!err) {
+	// 		default_conn = bt_conn_ref(conn);
+	// 		bt_conn_unref(conn);
+	// 	}
+	// }
+
+	bt_addr_le_to_str(device_info->recv_info->addr, addr,
+				  sizeof(addr));
+
+	bt_data_parse(device_info->adv_data, adv_data_parse_cb, name_str);
+
+	if (strlen(name_str) > 0) {
+		LOG_INF("no_match: %s", name_str);
+	}
+}
+
+BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
+		scan_connecting_error, scan_connecting);
+
+static void scan_init(void)
+{
+	// int err;
+
+	struct bt_scan_init_param scan_init = {
+		.connect_if_match = 1,
+		.scan_param = NULL,
+		.conn_param = BT_LE_CONN_PARAM_DEFAULT
+	};
+
+	bt_scan_init(&scan_init);
+	bt_scan_cb_register(&scan_cb);
+
+	// err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_BAS);
+	// if (err) {
+	// 	printk("Scanning filters cannot be set (err %d)\n", err);
+
+	// 	return;
+	// }
+
+	// err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	// if (err) {
+	// 	printk("Filters cannot be turned on (err %d)\n", err);
+	// }
+}
 
 int main(void)
 {
@@ -48,7 +165,8 @@ int main(void)
 
 	LOG_INF("\n\n🚀 MAIN START (%s) 🚀\n", APP_VERSION_FULL);
 
-	reset_cause = show_and_clear_reset_cause();
+	reset_cause = show_reset_cause();
+	clear_reset_cause();
 	
 	if (app_event_manager_init()) {
 		LOG_ERR("Event manager not initialized");
@@ -65,6 +183,33 @@ int main(void)
 		return ret;
 	}
 #endif
+
+
+
+
+	ret = bt_enable(NULL);
+	if (ret) {
+		printk("Bluetooth init failed (ret %d)\n", ret);
+		return 0;
+	}
+
+	scan_init();
+
+	ret = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	if (ret) {
+		printk("Scanning failed to start (ret %d)\n", ret);
+		return 0;
+	}
+
+	printk("Scanning successfully started\n");
+
+
+	k_sleep(K_SECONDS(3));
+
+
+	bt_scan_stop();
+
+
 
 	thread_analyzer_print(0);
 

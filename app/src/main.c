@@ -116,7 +116,7 @@ BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 
 static void scan_init(void)
 {
-	// int err;
+	int ret;
 
 	struct bt_scan_init_param scan_init = {
 		.connect_if_match = 1,
@@ -138,6 +138,18 @@ static void scan_init(void)
 	// if (err) {
 	// 	printk("Filters cannot be turned on (err %d)\n", err);
 	// }
+
+	ret = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, "Anker SOLIX F2000");
+	if (ret) {
+		printk("Scanning filters cannot be set (ret %d)\n", ret);
+
+		return;
+	}
+
+	ret = bt_scan_filter_enable(BT_SCAN_NAME_FILTER, false);
+	if (ret) {
+		printk("Filters cannot be turned on (ret %d)\n", ret);
+	}
 }
 
 int main(void)

@@ -68,12 +68,13 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 static void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
-	printk("Connecting failed\n");
+	LOG_ERR("scan_connecting_error");
 }
 
 static void scan_connecting(struct bt_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
+	LOG_INF("scan_connecting");
 	default_conn = bt_conn_ref(conn);
 }
 

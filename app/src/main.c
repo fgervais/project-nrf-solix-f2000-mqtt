@@ -39,8 +39,12 @@ static struct bt_conn *default_conn = NULL;
 // notify_char = "00008888-0000-1000-8000-00805f9b34fb"
 // write_char = "00007777-0000-1000-8000-00805f9b34fb"
 
+// static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
+// 	BT_UUID_128_ENCODE(0x00008888, 0x0000, 0x1000, 0x8000, 0x00805f9b34fb));
+
 static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
-	BT_UUID_128_ENCODE(0x00008888, 0x0000, 0x1000, 0x8000, 0x00805f9b34fb));
+	BT_UUID_128_ENCODE(0x8c850003, 0x0302, 0x41c5, 0xb46e, 0xcf057c562025));
+
 // static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x8888);
 static struct bt_gatt_read_params read_params;
 

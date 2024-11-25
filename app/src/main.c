@@ -8,8 +8,8 @@
 #include <zephyr/bluetooth/bluetooth.h>
 // #include <zephyr/bluetooth/hci.h>
 // #include <zephyr/bluetooth/conn.h>
-// #include <zephyr/bluetooth/uuid.h>
-// #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 // #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
@@ -34,7 +34,15 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 static K_EVENT_DEFINE(button_events);
 
 
-static struct bt_conn *default_conn;
+static struct bt_conn *default_conn = NULL;
+
+// notify_char = "00008888-0000-1000-8000-00805f9b34fb"
+// write_char = "00007777-0000-1000-8000-00805f9b34fb"
+
+static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
+	BT_UUID_128_ENCODE(0x00008888, 0x0000, 0x1000, 0x8000, 0x00805f9b34fb));
+// static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x8888);
+static struct bt_gatt_read_params read_params;
 
 
 static bool adv_data_parse_cb(struct bt_data *data, void *user_data)
@@ -153,6 +161,36 @@ static void scan_init(void)
 	}
 }
 
+static uint8_t gatt_read_cb(struct bt_conn *conn, uint8_t err,
+                            struct bt_gatt_read_params *params,
+                            const void *data, uint16_t length)
+{
+	LOG_INF("gatt_read_cb");
+
+        if (err != BT_ATT_ERR_SUCCESS) {
+                LOG_ERR("Read failed: 0x%02X\n", err);
+        }
+
+        // if (params->single.handle == chrc_handle) {
+        //         if (length != CHRC_SIZE ||
+        //             memcmp(data, chrc_data, length) != 0) {
+        //                 FAIL("chrc data different than expected", err);
+        //         }
+        // } else if (params->single.handle == chrc_handle) {
+        //         if (length != LONG_CHRC_SIZE ||
+        //             memcmp(data, long_chrc_data, length) != 0) {
+        //                 FAIL("long_chrc data different than expected", err);
+        //         }
+        // }
+
+        // (void)memset(params, 0, sizeof(*params));
+
+        LOG_HEXDUMP_INF(data, length, "bt data:");
+
+        return 0;
+}
+
+
 int main(void)
 {
 	const struct device *wdt = DEVICE_DT_GET(DT_NODELABEL(wdt0));
@@ -214,13 +252,29 @@ int main(void)
 		return 0;
 	}
 
-	printk("Scanning successfully started\n");
+	LOG_INF("Scanning successfully started");
 
 
-	k_sleep(K_SECONDS(3));
+	k_sleep(K_SECONDS(5));
 
 
 	bt_scan_stop();
+
+
+	if (default_conn != NULL) {
+		LOG_INF("We are connected, trying to read");
+
+		read_params.func = gatt_read_cb;
+		// read_params.handle_count = 0;
+		read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
+        	read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
+		read_params.by_uuid.uuid = service_uuid;
+
+		ret = bt_gatt_read(default_conn, &read_params);
+		if (ret != 0) {
+			LOG_ERR("bt_gatt_read failed: %d", ret);
+		}
+	}
 
 
 

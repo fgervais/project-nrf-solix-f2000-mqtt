@@ -46,7 +46,10 @@ static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
 	BT_UUID_128_ENCODE(0x8c850003, 0x0302, 0x41c5, 0xb46e, 0xcf057c562025));
 
 // static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x8888);
-static struct bt_gatt_read_params read_params;
+
+// static struct bt_gatt_read_params read_params;
+static struct bt_gatt_discover_params discover_params;
+static struct bt_gatt_subscribe_params subscribe_params;
 
 
 static bool adv_data_parse_cb(struct bt_data *data, void *user_data)
@@ -194,6 +197,130 @@ static uint8_t gatt_read_cb(struct bt_conn *conn, uint8_t err,
         return 0;
 }
 
+/**
+ * Internal function to process report notification and pass it further.
+ *
+ * @param conn   Connection handler.
+ * @param params Notification parameters structure - the pointer
+ *               to the structure provided to subscribe function.
+ * @param data   Pointer to the data buffer.
+ * @param length The size of the received data.
+ *
+ * @retval BT_GATT_ITER_STOP     Stop notification
+ * @retval BT_GATT_ITER_CONTINUE Continue notification
+ */
+static uint8_t notify_process(struct bt_conn *conn,
+                           struct bt_gatt_subscribe_params *params,
+                           const void *data, uint16_t length)
+{
+	LOG_INF("notify_process");
+
+        // struct bt_bnotify_processs_client *bas;
+        // uint8_t battery_level;
+        // const uint8_t *bdata = data;
+
+        // bas = CONTAINER_OF(params, struct bt_bas_client, notify_params);
+        // if (!data || !length) {
+        //         LOG_INF("Notifications disabled.");
+        //         if (bas->notify_cb) {
+        //                 bas->notify_cb(bas, BT_BAS_VAL_INVALID);
+        //         }
+        //         return BT_GATT_ITER_STOP;
+        // }
+        // if (length != 1) {
+        //         LOG_ERR("Unexpected notification value size.");
+        //         if (bas->notify_cb) {
+        //                 bas->notify_cb(bas, BT_BAS_VAL_INVALID);
+        //         }
+        //         return BT_GATT_ITER_STOP;
+        // }
+
+        // battery_level = bdata[0];
+        // if (battery_level > BT_BAS_VAL_MAX) {
+        //         LOG_ERR("Unexpected notification value.");
+        //         if (bas->notify_cb) {
+        //                 bas->notify_cb(bas, BT_BAS_VAL_INVALID);
+        //         }
+        //         return BT_GATT_ITER_STOP;
+        // }
+        // bas->battery_level = battery_level;
+        // if (bas->notify_cb) {
+        //         bas->notify_cb(bas, battery_level);
+        // }
+
+	LOG_HEXDUMP_INF(data, length, "notify data:");
+
+        return BT_GATT_ITER_CONTINUE;
+}
+
+
+uint16_t handle;
+bool subscribed;
+
+static uint8_t discovery_callback(struct bt_conn *conn,
+			       const struct bt_gatt_attr *attr,
+			       struct bt_gatt_discover_params *params)
+{
+	char uuid_str[BT_UUID_STR_LEN];
+	int err;
+
+	if (!attr) {
+		LOG_DBG("NULL attribute");
+	} else {
+		LOG_DBG("Attr: handle %u", attr->handle);
+
+		handle = attr->handle;
+
+		// LOG_DBG("Trying to subscribe");
+
+		// subscribe_params.notify = notify_process;
+		// subscribe_params.value = BT_GATT_CCC_NOTIFY;
+		// subscribe_params.value_handle = attr->handle;
+		// subscribe_params.ccc_handle = 0;
+		// atomic_set_bit(subscribe_params.flags,
+		//        BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
+
+		// err = bt_gatt_subscribe(default_conn, &subscribe_params);
+		// if (err) {
+		// 	LOG_ERR("Report notification subscribe error: %d.", err);
+		// }
+		// LOG_DBG("Report subscribed.");
+	}
+
+	bt_uuid_to_str(attr->uuid, uuid_str, sizeof(uuid_str));
+	LOG_DBG("UUID: %s", uuid_str);
+
+	// if (conn != bt_gatt_dm_inst.conn) {
+	// 	LOG_ERR("Unexpected conn object. Aborting.");
+	// 	discovery_complete_error(&bt_gatt_dm_inst, -EFAULT);
+	// 	return BT_GATT_ITER_STOP;
+	// }
+
+	// switch (params->type) {
+	// case BT_GATT_DISCOVER_PRIMARY:
+	// case BT_GATT_DISCOVER_SECONDARY:
+	// 	return discovery_process_service(&bt_gatt_dm_inst,
+	// 					 attr, params);
+	// case BT_GATT_DISCOVER_ATTRIBUTE:
+	// 	return discovery_process_attribute(&bt_gatt_dm_inst,
+	// 					   attr, params);
+	// case BT_GATT_DISCOVER_CHARACTERISTIC:
+	// 	return discovery_process_characteristic(&bt_gatt_dm_inst,
+	// 						attr,
+	// 						params);
+	// default:
+	// 	/* This should not be possible */
+	// 	__ASSERT(false, "Unknown param type.");
+	// 	discovery_complete_error(&bt_gatt_dm_inst, -EINVAL);
+
+	// 	break;
+	// }
+
+
+	return BT_GATT_ITER_STOP;
+}
+
+
 
 int main(void)
 {
@@ -268,16 +395,35 @@ int main(void)
 	if (default_conn != NULL) {
 		LOG_INF("We are connected, trying to read");
 
-		read_params.func = gatt_read_cb;
-		// read_params.handle_count = 0;
-		read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
-        	read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-		read_params.by_uuid.uuid = service_uuid;
+		// read_params.func = gatt_read_cb;
+		// // read_params.handle_count = 0;
+		// read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
+        	// read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
+		// read_params.by_uuid.uuid = service_uuid;
 
-		ret = bt_gatt_read(default_conn, &read_params);
-		if (ret != 0) {
-			LOG_ERR("bt_gatt_read failed: %d", ret);
-		}
+		// ret = bt_gatt_read(default_conn, &read_params);
+		// if (ret != 0) {
+		// 	LOG_ERR("bt_gatt_read failed: %d", ret);
+		// }
+
+
+
+		discover_params.func = discovery_callback;
+		discover_params.uuid = service_uuid;
+                discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
+                discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
+                discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+
+                ret = bt_gatt_discover(default_conn, &discover_params);
+
+
+
+		// bas->notify_params.notify = notify_process;
+		// bas->notify_params.value = BT_GATT_CCC_NOTIFY;
+		// bas->notify_params.value_handle = bas->val_handle;
+		// bas->notify_params.ccc_handle = bas->ccc_handle;
+		// atomic_set_bit(bas->notify_params.flags,
+		// 	       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 	}
 
 
@@ -296,6 +442,28 @@ int main(void)
 				K_SECONDS(CONFIG_APP_MAIN_LOOP_PERIOD_SEC));
 
 		LOG_INF("⏰ events: %08x", events);
+
+
+		if (!subscribed && handle != 0) {
+			LOG_DBG("Trying to subscribe");
+
+			subscribed = true;
+
+			subscribe_params.notify = notify_process;
+			subscribe_params.value = BT_GATT_CCC_NOTIFY;
+			subscribe_params.value_handle = handle;
+			subscribe_params.ccc_handle = 0;
+			atomic_set_bit(subscribe_params.flags,
+			       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
+
+			ret = bt_gatt_subscribe(default_conn, &subscribe_params);
+			if (ret) {
+				LOG_ERR("Report notification subscribe error: %d.", ret);
+			}
+			LOG_DBG("Report subscribed.");
+		}
+
+
 
 		if (events & BUTTON_PRESS_EVENT) {
 			LOG_INF("handling button press event");

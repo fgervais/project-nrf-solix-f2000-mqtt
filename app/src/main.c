@@ -42,10 +42,12 @@ static struct bt_conn *default_conn = NULL;
 // static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
 // 	BT_UUID_128_ENCODE(0x00008888, 0x0000, 0x1000, 0x8000, 0x00805f9b34fb));
 
-static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
-	BT_UUID_128_ENCODE(0x8c850003, 0x0302, 0x41c5, 0xb46e, 0xcf057c562025));
+// static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_128(
+// 	BT_UUID_128_ENCODE(0x8c850003, 0x0302, 0x41c5, 0xb46e, 0xcf057c562025));
 
 // static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x8888);
+
+static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x2902);
 
 // static struct bt_gatt_read_params read_params;
 static struct bt_gatt_discover_params discover_params;
@@ -254,8 +256,8 @@ static uint8_t notify_process(struct bt_conn *conn,
 }
 
 
-uint16_t handle;
-bool subscribed;
+static uint16_t handle;
+static bool subscribed;
 
 static uint8_t discovery_callback(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr,
@@ -339,11 +341,11 @@ int main(void)
 		return ret;
 	}
 
-	ret = watchdog_start(wdt);
-	if (ret < 0) {
-		LOG_ERR("Could allocate start watchdog");
-		return ret;
-	}
+	// ret = watchdog_start(wdt);
+	// if (ret < 0) {
+	// 	LOG_ERR("Could allocate start watchdog");
+	// 	return ret;
+	// }
 
 	LOG_INF("\n\n🚀 MAIN START (%s) 🚀\n", APP_VERSION_FULL);
 
@@ -412,7 +414,8 @@ int main(void)
 		discover_params.uuid = service_uuid;
                 discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
                 discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-                discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+                // discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+                discover_params.type = BT_GATT_DISCOVER_DESCRIPTOR;
 
                 ret = bt_gatt_discover(default_conn, &discover_params);
 
@@ -451,8 +454,9 @@ int main(void)
 
 			subscribe_params.notify = notify_process;
 			subscribe_params.value = BT_GATT_CCC_NOTIFY;
-			subscribe_params.value_handle = handle;
-			subscribe_params.ccc_handle = 0;
+			// subscribe_params.value = BT_GATT_CCC_INDICATE;
+			subscribe_params.value_handle = 0x0e;
+			subscribe_params.ccc_handle = 0x0f;
 			atomic_set_bit(subscribe_params.flags,
 			       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
 
@@ -461,9 +465,20 @@ int main(void)
 				LOG_ERR("Report notification subscribe error: %d.", ret);
 			}
 			LOG_DBG("Report subscribed.");
+
+
 		}
 
 
+		k_sleep(K_SECONDS(5));
+
+		// 0000   ff 09 36 00 03 00 01 00 01 a1 04 36 12 68 67 a2
+		// 0010   24 64 35 38 66 36 38 30 65 2d 32 39 34 37 2d 34
+		// 0020   33 32 39 2d 62 39 63 62 2d 63 39 35 32 30 30 35
+		// 0030   34 36 34 61 35 cb
+
+		// P9
+		// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
 
 		if (events & BUTTON_PRESS_EVENT) {
 			LOG_INF("handling button press event");

@@ -52,6 +52,17 @@ static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x2902);
 // static struct bt_gatt_read_params read_params;
 static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_subscribe_params subscribe_params;
+static struct bt_gatt_write_params write_params;
+
+static uint8_t write_data[] = {
+	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00,
+	0x01, 0xa1, 0x04, 0x36, 0x12, 0x68, 0x67, 0xa2,
+	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30,
+	0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62,
+	0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+	0x34, 0x36, 0x34, 0x61, 0x35, 0xcb
+};
 
 
 static bool adv_data_parse_cb(struct bt_data *data, void *user_data)
@@ -323,6 +334,12 @@ static uint8_t discovery_callback(struct bt_conn *conn,
 }
 
 
+static void write_callback(struct bt_conn *conn, uint8_t err,
+                    struct bt_gatt_write_params *params)
+{
+        LOG_DBG("write_callback: err=%d", err);
+}
+
 
 int main(void)
 {
@@ -464,21 +481,34 @@ int main(void)
 			if (ret) {
 				LOG_ERR("Report notification subscribe error: %d.", ret);
 			}
-			LOG_DBG("Report subscribed.");
+			LOG_DBG("Subscription sent");
 
+
+			k_sleep(K_SECONDS(5));
+
+			// 0000   ff 09 36 00 03 00 01 00 01 a1 04 36 12 68 67 a2
+			// 0010   24 64 35 38 66 36 38 30 65 2d 32 39 34 37 2d 34
+			// 0020   33 32 39 2d 62 39 63 62 2d 63 39 35 32 30 30 35
+			// 0030   34 36 34 61 35 cb
+
+			// P9
+			// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
+
+
+			write_params.func = write_callback;
+		        write_params.handle = 0x0c;
+		        write_params.offset = 0;
+		        write_params.data = write_data;
+		        write_params.length = ARRAY_SIZE(write_data);
+
+		        ret = bt_gatt_write(default_conn, &write_params);
+		        if (ret) {
+				LOG_ERR("Could not write: %d.", ret);
+			}
+			LOG_DBG("Write sent");
 
 		}
 
-
-		k_sleep(K_SECONDS(5));
-
-		// 0000   ff 09 36 00 03 00 01 00 01 a1 04 36 12 68 67 a2
-		// 0010   24 64 35 38 66 36 38 30 65 2d 32 39 34 37 2d 34
-		// 0020   33 32 39 2d 62 39 63 62 2d 63 39 35 32 30 30 35
-		// 0030   34 36 34 61 35 cb
-
-		// P9
-		// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
 
 		if (events & BUTTON_PRESS_EVENT) {
 			LOG_INF("handling button press event");

@@ -53,6 +53,7 @@ static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x2902);
 static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_subscribe_params subscribe_params;
 static struct bt_gatt_write_params write_params;
+static struct bt_gatt_exchange_params exchange_params;
 
 static uint8_t write_data[] = {
 	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00,
@@ -335,9 +336,20 @@ static uint8_t discovery_callback(struct bt_conn *conn,
 
 
 static void write_callback(struct bt_conn *conn, uint8_t err,
-                    struct bt_gatt_write_params *params)
+			   struct bt_gatt_write_params *params)
 {
         LOG_DBG("write_callback: err=%d", err);
+}
+
+
+static void exchange_func(struct bt_conn *conn, uint8_t err,
+			  struct bt_gatt_exchange_params *params)
+{
+        if (!err) {
+                LOG_INF("MTU exchange done");
+        } else {
+                LOG_WRN("MTU exchange failed (err %" PRIu8 ")", err);
+        }
 }
 
 
@@ -484,7 +496,7 @@ int main(void)
 			LOG_DBG("Subscription sent");
 
 
-			k_sleep(K_SECONDS(5));
+			k_sleep(K_SECONDS(2));
 
 			// 0000   ff 09 36 00 03 00 01 00 01 a1 04 36 12 68 67 a2
 			// 0010   24 64 35 38 66 36 38 30 65 2d 32 39 34 37 2d 34
@@ -494,6 +506,14 @@ int main(void)
 			// P9
 			// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
 
+
+		        exchange_params.func = exchange_func;
+		        ret = bt_gatt_exchange_mtu(default_conn, &exchange_params);
+		        if (ret) {
+		                LOG_WRN("MTU exchange failed (err %d)", ret);
+		        }
+
+		        k_sleep(K_SECONDS(2));
 
 			write_params.func = write_callback;
 		        write_params.handle = 0x0c;

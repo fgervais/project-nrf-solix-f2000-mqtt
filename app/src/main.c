@@ -55,15 +55,66 @@ static struct bt_gatt_subscribe_params subscribe_params;
 static struct bt_gatt_write_params write_params;
 static struct bt_gatt_exchange_params exchange_params;
 
-static uint8_t write_data[] = {
-	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00,
-	0x01, 0xa1, 0x04, 0x36, 0x12, 0x68, 0x67, 0xa2,
-	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30,
-	0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
-	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62,
-	0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
-	0x34, 0x36, 0x34, 0x61, 0x35, 0xcb
+// static uint8_t write_data[] = {
+// 	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00,
+// 	0x01, 0xa1, 0x04, 0x36, 0x12, 0x68, 0x67, 0xa2,
+// 	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30,
+// 	0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+// 	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62,
+// 	0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+// 	0x34, 0x36, 0x34, 0x61, 0x35, 0xcb
+// };
+
+static uint8_t write_data1[] = {
+	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01, 0xa1, 0x04, 0xfd, 0x72, 0x6d, 0x67, 0xa2,
+	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30, 0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62, 0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+	0x34, 0x36, 0x34, 0x61, 0x35, 0x65,
 };
+
+static uint8_t write_data2[] = {
+	0xff, 0x09, 0x3d, 0x00, 0x03, 0x00, 0x01, 0x00, 0x03, 0xa1, 0x04, 0xfd, 0x72, 0x6d, 0x67, 0xa2,
+	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30, 0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62, 0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+	0x34, 0x36, 0x34, 0x61, 0x35, 0xa3, 0x01, 0x20, 0xa4, 0x02, 0x00, 0xf0, 0xb8,
+};
+
+static uint8_t write_data3[] = {
+	0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00, 0x29, 0xa1, 0x04, 0xfd, 0x72, 0x6d, 0x67, 0xa2,
+	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30, 0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62, 0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+	0x34, 0x36, 0x34, 0x61, 0x35, 0x4d,
+};
+
+static uint8_t write_data4[] = {
+	0xff, 0x09, 0x40, 0x00, 0x03, 0x00, 0x01, 0x00, 0x05, 0xa1, 0x04, 0xfd, 0x72, 0x6d, 0x67, 0xa2,
+	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30, 0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62, 0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+	0x34, 0x36, 0x34, 0x61, 0x35, 0xa3, 0x01, 0x20, 0xa4, 0x02, 0x00, 0xf0, 0xa5, 0x01, 0x02, 0x65,
+};
+
+static uint8_t write_data5[] = {
+	0xff, 0x09, 0x5a, 0x00, 0x03, 0x00, 0x01, 0x40, 0x22, 0x4e, 0xe0, 0xfe, 0x87, 0xd5, 0xb4, 0xf2,
+	0x5f, 0x17, 0x0e, 0xbf, 0x6e, 0xcd, 0xea, 0xaf, 0x3f, 0x84, 0x2a, 0xe7, 0x10, 0x9c, 0x9e, 0x2d,
+	0xf7, 0x66, 0x4e, 0xf5, 0x59, 0xbe, 0x7f, 0xc9, 0x8f, 0x46, 0x0d, 0x60, 0xbd, 0x32, 0x2a, 0x83,
+	0xbd, 0xb2, 0xcf, 0x3c, 0xbb, 0x71, 0x25, 0xc3, 0x45, 0xe0, 0x49, 0x09, 0x48, 0x1a, 0x48, 0xd2,
+	0xd9, 0xba, 0xcb, 0x6a, 0x50, 0xdd, 0xdf, 0xb2, 0x10, 0x71, 0x6e, 0x2c, 0xd9, 0x7e, 0x05, 0x51,
+	0xc1, 0x1c, 0xa3, 0xd1, 0x1a, 0x10, 0x49, 0x5a, 0xaf, 0x31,
+};
+
+
+
+
+// static uint8_t write_data_1[] = {
+// 	0xff, 0x09, 0x3d, 0x00, 0x03, 0x00, 0x01, 0x00, 
+// 	0x03, 0xa1, 0x04, 0x1e, 0xd0, 0x68, 0x67, 0xa2,
+// 	0x24, 0x64, 0x35, 0x38, 0x66, 0x36, 0x38, 0x30,
+// 	0x65, 0x2d, 0x32, 0x39, 0x34, 0x37, 0x2d, 0x34,
+// 	0x33, 0x32, 0x39, 0x2d, 0x62, 0x39, 0x63, 0x62,
+// 	0x2d, 0x63, 0x39, 0x35, 0x32, 0x30, 0x30, 0x35,
+// 	0x34, 0x36, 0x34, 0x61, 0x35, 0xa3, 0x01, 0x20,
+// 	0xa4, 0x02, 0x00, 0xf0, 0xfc
+// };
 
 
 static bool adv_data_parse_cb(struct bt_data *data, void *user_data)
@@ -270,6 +321,7 @@ static uint8_t notify_process(struct bt_conn *conn,
 
 static uint16_t handle;
 static bool subscribed;
+static bool disconnect_sent;
 
 static uint8_t discovery_callback(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr,
@@ -423,40 +475,40 @@ int main(void)
 	bt_scan_stop();
 
 
-	if (default_conn != NULL) {
-		LOG_INF("We are connected, trying to read");
+	// if (default_conn != NULL) {
+	// 	LOG_INF("We are connected, trying to read");
 
-		// read_params.func = gatt_read_cb;
-		// // read_params.handle_count = 0;
-		// read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
-        	// read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-		// read_params.by_uuid.uuid = service_uuid;
+	// 	// read_params.func = gatt_read_cb;
+	// 	// // read_params.handle_count = 0;
+	// 	// read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
+        // 	// read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
+	// 	// read_params.by_uuid.uuid = service_uuid;
 
-		// ret = bt_gatt_read(default_conn, &read_params);
-		// if (ret != 0) {
-		// 	LOG_ERR("bt_gatt_read failed: %d", ret);
-		// }
-
-
-
-		discover_params.func = discovery_callback;
-		discover_params.uuid = service_uuid;
-                discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
-                discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-                // discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
-                discover_params.type = BT_GATT_DISCOVER_DESCRIPTOR;
-
-                ret = bt_gatt_discover(default_conn, &discover_params);
+	// 	// ret = bt_gatt_read(default_conn, &read_params);
+	// 	// if (ret != 0) {
+	// 	// 	LOG_ERR("bt_gatt_read failed: %d", ret);
+	// 	// }
 
 
 
-		// bas->notify_params.notify = notify_process;
-		// bas->notify_params.value = BT_GATT_CCC_NOTIFY;
-		// bas->notify_params.value_handle = bas->val_handle;
-		// bas->notify_params.ccc_handle = bas->ccc_handle;
-		// atomic_set_bit(bas->notify_params.flags,
-		// 	       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
-	}
+	// 	discover_params.func = discovery_callback;
+	// 	discover_params.uuid = service_uuid;
+        //         discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
+        //         discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
+        //         // discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
+        //         discover_params.type = BT_GATT_DISCOVER_DESCRIPTOR;
+
+        //         ret = bt_gatt_discover(default_conn, &discover_params);
+
+
+
+	// 	// bas->notify_params.notify = notify_process;
+	// 	// bas->notify_params.value = BT_GATT_CCC_NOTIFY;
+	// 	// bas->notify_params.value_handle = bas->val_handle;
+	// 	// bas->notify_params.ccc_handle = bas->ccc_handle;
+	// 	// atomic_set_bit(bas->notify_params.flags,
+	// 	// 	       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
+	// }
 
 
 
@@ -476,7 +528,10 @@ int main(void)
 		LOG_INF("⏰ events: %08x", events);
 
 
-		if (!subscribed && handle != 0) {
+		// if (!subscribed && handle != 0) {
+		if (!subscribed) {
+			k_sleep(K_SECONDS(5));
+
 			LOG_DBG("Trying to subscribe");
 
 			subscribed = true;
@@ -507,19 +562,75 @@ int main(void)
 			// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
 
 
-		        exchange_params.func = exchange_func;
-		        ret = bt_gatt_exchange_mtu(default_conn, &exchange_params);
-		        if (ret) {
-		                LOG_WRN("MTU exchange failed (err %d)", ret);
-		        }
+		        // exchange_params.func = exchange_func;
+		        // ret = bt_gatt_exchange_mtu(default_conn, &exchange_params);
+		        // if (ret) {
+		        //         LOG_WRN("MTU exchange failed (err %d)", ret);
+		        // }
 
-		        k_sleep(K_SECONDS(2));
+		        // k_sleep(K_SECONDS(2));
 
 			write_params.func = write_callback;
 		        write_params.handle = 0x0c;
 		        write_params.offset = 0;
-		        write_params.data = write_data;
-		        write_params.length = ARRAY_SIZE(write_data);
+		        write_params.data = write_data1;
+		        write_params.length = ARRAY_SIZE(write_data1);
+
+		        ret = bt_gatt_write(default_conn, &write_params);
+		        if (ret) {
+				LOG_ERR("Could not write: %d.", ret);
+			}
+			LOG_DBG("Write sent");
+
+			k_sleep(K_SECONDS(1));
+
+			// write_params.func = write_callback;
+		        // write_params.handle = 0x0c;
+		        // write_params.offset = 0;
+		        write_params.data = write_data2;
+		        write_params.length = ARRAY_SIZE(write_data2);
+
+		        ret = bt_gatt_write(default_conn, &write_params);
+		        if (ret) {
+				LOG_ERR("Could not write: %d.", ret);
+			}
+			LOG_DBG("Write sent");
+
+			k_sleep(K_SECONDS(1));
+
+			// write_params.func = write_callback;
+		        // write_params.handle = 0x0c;
+		        // write_params.offset = 0;
+		        write_params.data = write_data3;
+		        write_params.length = ARRAY_SIZE(write_data3);
+
+		        ret = bt_gatt_write(default_conn, &write_params);
+		        if (ret) {
+				LOG_ERR("Could not write: %d.", ret);
+			}
+			LOG_DBG("Write sent");
+
+			k_sleep(K_SECONDS(1));
+
+			// write_params.func = write_callback;
+		        // write_params.handle = 0x0c;
+		        // write_params.offset = 0;
+		        write_params.data = write_data4;
+		        write_params.length = ARRAY_SIZE(write_data4);
+
+		        ret = bt_gatt_write(default_conn, &write_params);
+		        if (ret) {
+				LOG_ERR("Could not write: %d.", ret);
+			}
+			LOG_DBG("Write sent");
+
+			k_sleep(K_SECONDS(1));
+
+			// write_params.func = write_callback;
+		        // write_params.handle = 0x0c;
+		        // write_params.offset = 0;
+		        write_params.data = write_data5;
+		        write_params.length = ARRAY_SIZE(write_data5);
 
 		        ret = bt_gatt_write(default_conn, &write_params);
 		        if (ret) {
@@ -529,6 +640,18 @@ int main(void)
 
 		}
 
+		if (!disconnect_sent && k_uptime_get() > 60000) {
+			ret = bt_conn_disconnect(default_conn,
+				BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+			if (ret) {
+				LOG_ERR("Could not disconnect: %d.", ret);
+			}
+			else {
+				LOG_DBG("⛓️‍💥 Disconnect sent");
+			}
+
+			disconnect_sent = true;
+		}
 
 		if (events & BUTTON_PRESS_EVENT) {
 			LOG_INF("handling button press event");

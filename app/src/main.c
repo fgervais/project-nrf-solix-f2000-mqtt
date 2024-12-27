@@ -329,17 +329,6 @@ static void write_callback(struct bt_conn *conn, uint8_t err,
 }
 
 
-static void exchange_func(struct bt_conn *conn, uint8_t err,
-			  struct bt_gatt_exchange_params *params)
-{
-        if (!err) {
-                LOG_INF("MTU exchange done");
-        } else {
-                LOG_WRN("MTU exchange failed (err %" PRIu8 ")", err);
-        }
-}
-
-
 int main(void)
 {
 	const struct device *wdt = DEVICE_DT_GET(DT_NODELABEL(wdt0));

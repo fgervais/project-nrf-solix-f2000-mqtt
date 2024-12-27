@@ -426,9 +426,8 @@ int main(void)
 		LOG_INF("⏰ events: %08x", events);
 
 
-		// if (!subscribed && handle != 0) {
 		if (!subscribed) {
-			k_sleep(K_SECONDS(5));
+			k_sleep(K_SECONDS(2));
 
 			LOG_DBG("Trying to subscribe");
 
@@ -436,7 +435,6 @@ int main(void)
 
 			subscribe_params.notify = notify_process;
 			subscribe_params.value = BT_GATT_CCC_NOTIFY;
-			// subscribe_params.value = BT_GATT_CCC_INDICATE;
 			subscribe_params.value_handle = 0x0e;
 			subscribe_params.ccc_handle = 0x0f;
 			atomic_set_bit(subscribe_params.flags,
@@ -448,25 +446,7 @@ int main(void)
 			}
 			LOG_DBG("Subscription sent");
 
-
 			k_sleep(K_SECONDS(2));
-
-			// 0000   ff 09 36 00 03 00 01 00 01 a1 04 36 12 68 67 a2
-			// 0010   24 64 35 38 66 36 38 30 65 2d 32 39 34 37 2d 34
-			// 0020   33 32 39 2d 62 39 63 62 2d 63 39 35 32 30 30 35
-			// 0030   34 36 34 61 35 cb
-
-			// P9
-			// 0}ÀL\eP=9Rÿ	6¡6hg¢$d58f680e-2947-4329-b9cb-c952005464a5Ë~ 1
-
-
-		        // exchange_params.func = exchange_func;
-		        // ret = bt_gatt_exchange_mtu(default_conn, &exchange_params);
-		        // if (ret) {
-		        //         LOG_WRN("MTU exchange failed (err %d)", ret);
-		        // }
-
-		        // k_sleep(K_SECONDS(2));
 
 			write_params.func = write_callback;
 		        write_params.handle = 0x0c;
@@ -482,9 +462,6 @@ int main(void)
 
 			k_sleep(K_SECONDS(1));
 
-			// write_params.func = write_callback;
-		        // write_params.handle = 0x0c;
-		        // write_params.offset = 0;
 		        write_params.data = write_data2;
 		        write_params.length = ARRAY_SIZE(write_data2);
 
@@ -496,9 +473,6 @@ int main(void)
 
 			k_sleep(K_SECONDS(1));
 
-			// write_params.func = write_callback;
-		        // write_params.handle = 0x0c;
-		        // write_params.offset = 0;
 		        write_params.data = write_data3;
 		        write_params.length = ARRAY_SIZE(write_data3);
 
@@ -510,9 +484,6 @@ int main(void)
 
 			k_sleep(K_SECONDS(1));
 
-			// write_params.func = write_callback;
-		        // write_params.handle = 0x0c;
-		        // write_params.offset = 0;
 		        write_params.data = write_data4;
 		        write_params.length = ARRAY_SIZE(write_data4);
 
@@ -524,9 +495,6 @@ int main(void)
 
 			k_sleep(K_SECONDS(1));
 
-			// write_params.func = write_callback;
-		        // write_params.handle = 0x0c;
-		        // write_params.offset = 0;
 		        write_params.data = write_data5;
 		        write_params.length = ARRAY_SIZE(write_data5);
 

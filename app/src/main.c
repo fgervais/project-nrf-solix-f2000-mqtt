@@ -49,8 +49,6 @@ static struct bt_conn *default_conn = NULL;
 
 static const struct bt_uuid *service_uuid = BT_UUID_DECLARE_16(0x2902);
 
-// static struct bt_gatt_read_params read_params;
-static struct bt_gatt_discover_params discover_params;
 static struct bt_gatt_subscribe_params subscribe_params;
 static struct bt_gatt_write_params write_params;
 static struct bt_gatt_exchange_params exchange_params;
@@ -323,69 +321,6 @@ static uint16_t handle;
 static bool subscribed;
 static bool disconnect_sent;
 
-static uint8_t discovery_callback(struct bt_conn *conn,
-			       const struct bt_gatt_attr *attr,
-			       struct bt_gatt_discover_params *params)
-{
-	char uuid_str[BT_UUID_STR_LEN];
-	int err;
-
-	if (!attr) {
-		LOG_DBG("NULL attribute");
-	} else {
-		LOG_DBG("Attr: handle %u", attr->handle);
-
-		handle = attr->handle;
-
-		// LOG_DBG("Trying to subscribe");
-
-		// subscribe_params.notify = notify_process;
-		// subscribe_params.value = BT_GATT_CCC_NOTIFY;
-		// subscribe_params.value_handle = attr->handle;
-		// subscribe_params.ccc_handle = 0;
-		// atomic_set_bit(subscribe_params.flags,
-		//        BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
-
-		// err = bt_gatt_subscribe(default_conn, &subscribe_params);
-		// if (err) {
-		// 	LOG_ERR("Report notification subscribe error: %d.", err);
-		// }
-		// LOG_DBG("Report subscribed.");
-	}
-
-	bt_uuid_to_str(attr->uuid, uuid_str, sizeof(uuid_str));
-	LOG_DBG("UUID: %s", uuid_str);
-
-	// if (conn != bt_gatt_dm_inst.conn) {
-	// 	LOG_ERR("Unexpected conn object. Aborting.");
-	// 	discovery_complete_error(&bt_gatt_dm_inst, -EFAULT);
-	// 	return BT_GATT_ITER_STOP;
-	// }
-
-	// switch (params->type) {
-	// case BT_GATT_DISCOVER_PRIMARY:
-	// case BT_GATT_DISCOVER_SECONDARY:
-	// 	return discovery_process_service(&bt_gatt_dm_inst,
-	// 					 attr, params);
-	// case BT_GATT_DISCOVER_ATTRIBUTE:
-	// 	return discovery_process_attribute(&bt_gatt_dm_inst,
-	// 					   attr, params);
-	// case BT_GATT_DISCOVER_CHARACTERISTIC:
-	// 	return discovery_process_characteristic(&bt_gatt_dm_inst,
-	// 						attr,
-	// 						params);
-	// default:
-	// 	/* This should not be possible */
-	// 	__ASSERT(false, "Unknown param type.");
-	// 	discovery_complete_error(&bt_gatt_dm_inst, -EINVAL);
-
-	// 	break;
-	// }
-
-
-	return BT_GATT_ITER_STOP;
-}
-
 
 static void write_callback(struct bt_conn *conn, uint8_t err,
 			   struct bt_gatt_write_params *params)
@@ -473,43 +408,6 @@ int main(void)
 
 
 	bt_scan_stop();
-
-
-	// if (default_conn != NULL) {
-	// 	LOG_INF("We are connected, trying to read");
-
-	// 	// read_params.func = gatt_read_cb;
-	// 	// // read_params.handle_count = 0;
-	// 	// read_params.by_uuid.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
-        // 	// read_params.by_uuid.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-	// 	// read_params.by_uuid.uuid = service_uuid;
-
-	// 	// ret = bt_gatt_read(default_conn, &read_params);
-	// 	// if (ret != 0) {
-	// 	// 	LOG_ERR("bt_gatt_read failed: %d", ret);
-	// 	// }
-
-
-
-	// 	discover_params.func = discovery_callback;
-	// 	discover_params.uuid = service_uuid;
-        //         discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;
-        //         discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;
-        //         // discover_params.type = BT_GATT_DISCOVER_CHARACTERISTIC;
-        //         discover_params.type = BT_GATT_DISCOVER_DESCRIPTOR;
-
-        //         ret = bt_gatt_discover(default_conn, &discover_params);
-
-
-
-	// 	// bas->notify_params.notify = notify_process;
-	// 	// bas->notify_params.value = BT_GATT_CCC_NOTIFY;
-	// 	// bas->notify_params.value_handle = bas->val_handle;
-	// 	// bas->notify_params.ccc_handle = bas->ccc_handle;
-	// 	// atomic_set_bit(bas->notify_params.flags,
-	// 	// 	       BT_GATT_SUBSCRIBE_FLAG_VOLATILE);
-	// }
-
 
 
 	thread_analyzer_print(0);

@@ -231,34 +231,6 @@ static void scan_init(void)
 	}
 }
 
-static uint8_t gatt_read_cb(struct bt_conn *conn, uint8_t err,
-                            struct bt_gatt_read_params *params,
-                            const void *data, uint16_t length)
-{
-	LOG_INF("gatt_read_cb");
-
-        if (err != BT_ATT_ERR_SUCCESS) {
-                LOG_ERR("Read failed: 0x%02X\n", err);
-        }
-
-        // if (params->single.handle == chrc_handle) {
-        //         if (length != CHRC_SIZE ||
-        //             memcmp(data, chrc_data, length) != 0) {
-        //                 FAIL("chrc data different than expected", err);
-        //         }
-        // } else if (params->single.handle == chrc_handle) {
-        //         if (length != LONG_CHRC_SIZE ||
-        //             memcmp(data, long_chrc_data, length) != 0) {
-        //                 FAIL("long_chrc data different than expected", err);
-        //         }
-        // }
-
-        // (void)memset(params, 0, sizeof(*params));
-
-        LOG_HEXDUMP_INF(data, length, "bt data:");
-
-        return 0;
-}
 
 /**
  * Internal function to process report notification and pass it further.
@@ -317,7 +289,6 @@ static uint8_t notify_process(struct bt_conn *conn,
 }
 
 
-static uint16_t handle;
 static bool subscribed;
 static bool disconnect_sent;
 

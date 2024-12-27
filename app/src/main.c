@@ -389,7 +389,7 @@ int main(void)
 
 	ret = bt_enable(NULL);
 	if (ret) {
-		printk("Bluetooth init failed (ret %d)\n", ret);
+		LOG_ERR("Bluetooth init failed (ret %d)", ret);
 		return 0;
 	}
 
@@ -397,7 +397,7 @@ int main(void)
 
 	ret = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (ret) {
-		printk("Scanning failed to start (ret %d)\n", ret);
+		LOG_ERR("Scanning failed to start (ret %d)", ret);
 		return 0;
 	}
 

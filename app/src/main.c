@@ -404,10 +404,10 @@ int main(void)
 				return ret;
 			}
 
-			LOG_INF("💤 waiting for openthread to be ready");
-			openthread_wait(OT_ROLE_SET | 
-					OT_MESH_LOCAL_ADDR_SET | 
-					OT_HAS_NEIGHBORS);
+			// LOG_INF("💤 waiting for openthread to be ready");
+			// openthread_wait(OT_ROLE_SET | 
+			// 		OT_MESH_LOCAL_ADDR_SET | 
+			// 		OT_HAS_NEIGHBORS);
 
 
 			// bool inhibit_discovery = false;

@@ -7,7 +7,7 @@
 	*/
 	chosen {
 		zephyr,entropy = &rng;
-		zephyr,bt-hci = &bt_hci_controller;
+		// zephyr,bt-hci = &bt_hci_controller;
 	};
 };
 &pinctrl {
@@ -136,9 +136,9 @@
 &ieee802154 {
 	status = "okay";
 };
-&bt_hci_controller {
-        status = "okay";
-};
-&bt_hci_sdc {
-        status = "disabled";
-};
+// &bt_hci_controller {
+//         status = "okay";
+// };
+// &bt_hci_sdc {
+//         status = "disabled";
+// };

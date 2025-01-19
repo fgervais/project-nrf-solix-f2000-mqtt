@@ -1,5 +1,5 @@
 list(APPEND OVERLAY_CONFIG "ble.conf")
-list(APPEND OVERLAY_CONFIG "thread.conf")
+list(APPEND OVERLAY_CONFIG "home-assistant.conf")
 list(APPEND OVERLAY_CONFIG "secret.conf")
 
 cmake_minimum_required(VERSION 3.20.0)

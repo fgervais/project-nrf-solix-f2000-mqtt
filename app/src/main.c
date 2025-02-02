@@ -41,6 +41,11 @@ static struct bt_gatt_subscribe_params subscribe_params;
 static struct bt_gatt_write_params write_params;
 
 
+
+static uint8_t last_notify_data_244[244];
+static uint8_t last_notify_data_34[34];
+
+
 static uint8_t iphone_init_replay[][128] = {
 	{
 		0xff, 0x09, 0x36, 0x00, 0x03, 0x00, 0x01, 0x00, 0x01, 0xa1, 0x04, 0xfd, 0x72, 0x6d, 0x67, 0xa2,
@@ -210,6 +215,12 @@ static uint8_t notify_process(struct bt_conn *conn,
                            struct bt_gatt_subscribe_params *params,
                            const void *data, uint16_t length)
 {
+	uint8_t xor_buffer[256];
+	uint8_t *last_notify_data;
+	size_t data_length;
+	int i;
+	const uint8_t *notify_data = data;
+
 	LOG_INF("notify_process");
 
         // struct bt_bnotify_processs_client *bas;
@@ -245,7 +256,29 @@ static uint8_t notify_process(struct bt_conn *conn,
         //         bas->notify_cb(bas, battery_level);
         // }
 
-	LOG_HEXDUMP_INF(data, length, "notify data:");
+	// LOG_HEXDUMP_INF(data, length, "notify data:");
+
+	data_length = notify_data[2];
+
+	if (data_length == 244) {
+		last_notify_data = last_notify_data_244;
+	}
+	else if (data_length == 34) {
+		last_notify_data = last_notify_data_34;
+	}
+	else {
+		LOG_WRN("unexpected notify size");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	for (i = 0; i < data_length; i++) {
+		xor_buffer[i] = last_notify_data[i] ^ notify_data[i];
+	}
+
+	LOG_HEXDUMP_INF(xor_buffer, length, "notify data XOR:");
+
+	memcpy(last_notify_data, notify_data, data_length);
+
 
         return BT_GATT_ITER_CONTINUE;
 }
